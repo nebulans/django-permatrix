@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.generic import View
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.http import HttpResponse
 
 from itertools import chain
 
@@ -55,6 +56,11 @@ class PermissionMatrixView(View):
             "groups": self.group_rows
         }
         return render(request, "permatrix/base.html", data)
+
+    def post(self, request):
+        data = request.POST
+        print data
+        return HttpResponse()
 
     def get_permissions(self):
         return Permission.objects.exclude(content_type__app_label__in=EXCLUDE_MODULES).select_related("content_type")

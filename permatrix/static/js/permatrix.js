@@ -44,11 +44,20 @@ $(document).on("click", ".submit-perms", function(){
             action: t.data("action")
         })
     });
-    console.log(perm_changes);
     // Make AJAX request
     $.ajax({
         method: "POST",
         data: {data: JSON.stringify(perm_changes)},
         headers: {"X-CSRFToken": getCookie("csrftoken")}
+    }).done(function(){
+        // Permission updates successful
+        // Clear pending updates list
+        $("#pending-actions").html("");
+        // Remove all perm_remove classes
+        $(".perm_remove").removeClass("perm_remove");
+        // Remove all perm_add classes and replace with perm_yes
+        $(".perm_add").removeClass("perm_add").addClass("perm_yes");
+    }).fail(function(){
+        $(".actions").append("<p>An error occured</p>")
     })
 });
