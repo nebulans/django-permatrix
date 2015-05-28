@@ -32,7 +32,7 @@ class PermissionMatrixView(View):
         return render(request, "permatrix/base.html", data)
 
     def get_permissions(self):
-        return Permission.objects.exclude(content_type__app_label__in=EXCLUDE_MODULES)
+        return Permission.objects.exclude(content_type__app_label__in=EXCLUDE_MODULES).select_related("content_type")
 
     def build_headers(self, permissions):
         # Assemble top row - modules
@@ -63,7 +63,6 @@ class PermissionMatrixView(View):
 
     def attach_groups(self):
         groups = Group.objects.all().order_by("name")
-        print groups
         for g in groups:
             data = {"group": g, "cells": []}
             permission_set = {perm.pk for perm in g.permissions.all()}
