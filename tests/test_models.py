@@ -8,20 +8,20 @@ test_django-permatrix
 Tests for `django-permatrix` models module.
 """
 
-import os
-import shutil
-import unittest
+from django.test import TestCase
 
-from permatrix import models
+from permatrix.views import PermissionMatrixView
 
-
-class TestPermatrix(unittest.TestCase):
+class TestPermatrix(TestCase):
 
     def setUp(self):
         pass
 
-    def test_something(self):
-        pass
+    def test_all_modules_sorted(self):
+        PMV = PermissionMatrixView()
+        PMV.header_data = {"alpha": "first", "gamma": "last", "beta": "second"}
+        result = [x for x in PMV.all_modules()]
+        self.assertEqual(result, ["first", "second", "last"])
 
     def tearDown(self):
         pass

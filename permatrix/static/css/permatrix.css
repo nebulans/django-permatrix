@@ -1,0 +1,18 @@
+.vertical-text {
+    -webkit-writing-mode: vertical-rl;
+    -ms-writing-mode: tb-rl;
+    writing-mode: vertical-rl;
+}
+
+.permname {
+    min-width: 15px;
+    font-size: 10px;
+}
+
+td {
+    border-left: 1px solid #eee;
+}
+
+.perm_yes {
+    background-color: #008000;
+}
