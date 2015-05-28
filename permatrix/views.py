@@ -2,12 +2,37 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic import View
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 
 from itertools import chain
 
 # Set of module names to exclude from view
 EXCLUDE_MODULES = {"sites", "sessions", "contenttypes", "djcelery", "django", "south"}
 EXCLUDE_MODULES = {}
+
+class Cell(object):
+
+    def __init__(self, has_perm):
+        self.attrs_dict = {}
+        self.classes = []
+        if has_perm:
+            self.classes.append("perm_yes")
+
+    def attr(self, **kwargs):
+        for key in kwargs:
+            self.attrs_dict[key] = kwargs[key]
+
+    def data(self, **kwargs):
+        for key in kwargs:
+            data_key = "data-%s" % key
+            self.attrs_dict[data_key] = kwargs[key]
+
+    @property
+    def html(self):
+        self.attrs_dict["class"] = " ".join(self.classes)
+        attrs = " ".join(["{}='{}'".format(k, self.attrs_dict[k]) for k in self.attrs_dict])
+        return mark_safe("<td {}></td>".format(attrs))
+
 
 class PermissionMatrixView(View):
 
@@ -45,7 +70,8 @@ class PermissionMatrixView(View):
             if model_name not in app_container["children"]:
                 app_container["children"][model_name] = {"children": {}, "ct": perm.content_type, "attrs": {}}
             model_container = app_container["children"][model_name]
-            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "attrs": {}}
+            full_name = "{}.{}".format(app_label, perm.codename)
+            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "attrs": {}, "name": full_name}
 
     def all_permissions(self):
         for model in self.all_models():
@@ -67,7 +93,10 @@ class PermissionMatrixView(View):
             data = {"group": g, "cells": []}
             permission_set = {perm.pk for perm in g.permissions.all()}
             for permission in self.all_permissions():
-                data["cells"].append(permission["permission"].pk in permission_set)
+                cell = Cell(permission["permission"].pk in permission_set)
+                cell.data(permission_id=permission["permission"].id, permission_name=permission["name"])
+                cell.data(group_id=g.id, group_name=g.name)
+                data["cells"].append(cell)
             self.group_rows.append(data)
 
     def calculate_colspan(self):

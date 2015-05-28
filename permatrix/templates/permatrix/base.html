@@ -32,7 +32,7 @@
 			<tr>
 				<td>{{ group.group.name }}</td>
 				{% for cell in group.cells %}
-					<td class="{% if cell %}perm_yes{% endif %}"></td>
+					{{ cell.html }}
 				{% endfor %}
 			</tr>
 		{% endfor %}
