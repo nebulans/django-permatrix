@@ -35,3 +35,11 @@ td {
 .perm_yes {
     background-color: #008000;
 }
+
+.perm_add {
+    background-color: #ffff00;
+}
+
+.perm_remove {
+    background-color: #8b0000;
+}

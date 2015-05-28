@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "css/permatrix.css" %}" />{% endblock %}
+{% block extrahead %}{{ block.super }}<script src="{% static 'js/permatrix.js' %}"></script>{% endblock %}
 
 
 {% block sidebar %}{% endblock %}
@@ -37,5 +38,10 @@
 			</tr>
 		{% endfor %}
 	</table>
+</div>
+
+<div class="actions">
+	<h3>Pending Actions</h3>
+	<ul id="pending-actions"></ul>
 </div>
 {% endblock %}

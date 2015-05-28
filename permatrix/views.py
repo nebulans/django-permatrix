@@ -14,7 +14,7 @@ class Cell(object):
 
     def __init__(self, has_perm):
         self.attrs_dict = {}
-        self.classes = []
+        self.classes = ["permission-cell"]
         if has_perm:
             self.classes.append("perm_yes")
 
