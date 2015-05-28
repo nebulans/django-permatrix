@@ -4,13 +4,32 @@
     writing-mode: vertical-rl;
 }
 
+.dashboard #content {
+    /* Need to override base django CSS here to force full width */
+    width: 100%;
+}
+
 .permname {
     min-width: 15px;
     font-size: 10px;
 }
 
+.permatrix-container {
+    overflow-x: scroll;
+    width: 95%;
+}
+
+.module-row td {
+    font-size: 14px;
+    text-align: center;
+}
+
+.model-row td {
+    text-align: center;
+}
+
 td {
-    border-left: 1px solid #eee;
+    border: 1px solid #eee;
 }
 
 .perm_yes {
