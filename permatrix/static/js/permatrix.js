@@ -14,23 +14,39 @@ function getCookie(name) {
     return cookieValue;
 }
 
+function restoreCell(cell) {
+    // Restore cell to original style
+    if (cell.hasClass("perm_add")) {
+        cell.removeClass("perm_add");
+    } else {
+        cell.removeClass("perm_remove");
+        cell.addClass("perm_yes")
+    }
+    // Remove entry from actions list
+    cell.data("action").remove();
+}
+
 $(document).on("click", ".permission-cell", function(){
     var t = $(this);
     var actions_container = $("#pending-actions");
     var action_elem = $("<li>");
     action_elem.data("permission", t.data("permission_id"));
     action_elem.data("group", t.data("group_id"));
-    if (t.hasClass("perm_yes")) {
+    if (t.hasClass("perm_add") || t.hasClass("perm_remove")) {
+        restoreCell(t);
+        return false
+    } else if (t.hasClass("perm_yes")) {
         action_elem.text("Remove permission " + t.data("permission_name") + " from group " + t.data("group_name"));
         action_elem.data("action", "remove");
         t.removeClass("perm_yes");
         t.addClass("perm_remove");
     } else {
-        action_elem.text("Add permission " + t.data("permission_name") + " to group " + t.data("group_name"))
+        action_elem.text("Add permission " + t.data("permission_name") + " to group " + t.data("group_name"));
         action_elem.data("action", "add");
         t.addClass("perm_add");
     }
-    actions_container.append(action_elem)
+    var inserted_elem = action_elem.appendTo(actions_container);
+    t.data("action", inserted_elem);
 });
 
 $(document).on("click", ".submit-perms", function(){
