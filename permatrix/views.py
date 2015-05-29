@@ -16,26 +16,50 @@ EXCLUDE_MODULES = {}
 
 class Cell(object):
 
-    def __init__(self, has_perm):
+    def __init__(self, text=""):
         self.attrs_dict = {}
-        self.classes = ["permission-cell"]
-        if has_perm:
-            self.classes.append("perm_yes")
+        self.classes = []
+        self.text = text
 
-    def attr(self, **kwargs):
-        for key in kwargs:
-            self.attrs_dict[key] = kwargs[key]
+    def attr(self, *args, **kwargs):
+        if kwargs:
+            for key in kwargs:
+                self.attrs_dict[key] = kwargs[key]
+        elif args:
+            return self.attrs_dict.get(args[0])
 
-    def data(self, **kwargs):
+    def data(self, *args, **kwargs):
         for key in kwargs:
             data_key = "data-%s" % key
             self.attrs_dict[data_key] = kwargs[key]
 
+    def render_attrs(self):
+        self.attrs_dict["class"] = " ".join(self.classes)
+        return " ".join(["{}='{}'".format(k, self.attrs_dict[k]) for k in self.attrs_dict])
+
     @property
     def html(self):
-        self.attrs_dict["class"] = " ".join(self.classes)
-        attrs = " ".join(["{}='{}'".format(k, self.attrs_dict[k]) for k in self.attrs_dict])
-        return mark_safe("<td {}></td>".format(attrs))
+        return mark_safe("<td {}>{}</td>".format(self.render_attrs(), self.text))
+
+
+class PermissionCell(Cell):
+
+    def __init__(self, text="", has_perm=False):
+        super(PermissionCell, self).__init__(text)
+        self.classes.append("permission-cell")
+        if has_perm:
+            self.classes.append("perm_yes")
+
+
+class PermNameCell(Cell):
+
+    def __init__(self, text=""):
+        super(PermNameCell, self).__init__(text)
+        self.classes.append("permname")
+
+    @property
+    def html(self):
+        return mark_safe("<td {}><span class='vertical-text'>{}</span></td>".format(self.render_attrs(), self.text))
 
 
 class GroupPermissionForm(forms.Form):
@@ -91,14 +115,14 @@ class PermissionMatrixView(View):
         for perm in permissions:
             app_label = perm.content_type.app_label
             if app_label not in self.header_data:
-                self.header_data[app_label] = {"children": {}, "ct": perm.content_type, "attrs": {}}
+                self.header_data[app_label] = {"children": {}, "ct": perm.content_type, "cell": Cell(perm.content_type.app_label)}
             app_container = self.header_data[app_label]
             model_name = perm.content_type.model
             if model_name not in app_container["children"]:
-                app_container["children"][model_name] = {"children": {}, "ct": perm.content_type, "attrs": {}}
+                app_container["children"][model_name] = {"children": {}, "ct": perm.content_type, "cell": Cell(perm.content_type.name)}
             model_container = app_container["children"][model_name]
             full_name = "{}.{}".format(app_label, perm.codename)
-            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "attrs": {}, "name": full_name}
+            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "name": full_name, "cell": PermNameCell(perm.codename)}
 
     def all_permissions(self):
         for model in self.all_models():
@@ -120,7 +144,7 @@ class PermissionMatrixView(View):
             data = {"group": g, "cells": []}
             permission_set = {perm.pk for perm in g.permissions.all()}
             for permission in self.all_permissions():
-                cell = Cell(permission["permission"].pk in permission_set)
+                cell = PermissionCell("", permission["permission"].pk in permission_set)
                 cell.data(permission_id=permission["permission"].id, permission_name=permission["name"])
                 cell.data(group_id=g.id, group_name=g.name)
                 data["cells"].append(cell)
@@ -129,6 +153,6 @@ class PermissionMatrixView(View):
     def calculate_colspan(self):
         for module in self.all_modules():
             for model in module["children"].values():
-                model["attrs"]["colspan"] = len(model["children"])
-            module["attrs"]["colspan"] = sum(model["attrs"]["colspan"] for model in module["children"].values())
+                model["cell"].attr(colspan=len(model["children"]))
+            module["cell"].attr(colspan=sum(model["cell"].attr("colspan") for model in module["children"].values()))
 

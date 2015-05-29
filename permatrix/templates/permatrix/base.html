@@ -14,19 +14,19 @@
 		<tr class="module-row">
 			<td></td>
 			{% for module in modules %}
-				<td colspan="{{ module.attrs.colspan }}">{{ module.ct.app_label }}</td>
+				{{ module.cell.html }}
 			{% endfor %}
 		</tr>
 		<tr class="model-row">
 			<td></td>
 			{% for model in models %}
-				<td colspan="{{ model.attrs.colspan }}">{{ model.ct.name }}</td>
+				{{ model.cell.html }}
 			{% endfor %}
 		</tr>
 		<tr class="permission-row">
 			<td></td>
 			{% for permission in permissions %}
-				<td class="permname"><span class="vertical-text">{{ permission.permission.codename }}</span></td>
+				{{ permission.cell.html }}
 			{% endfor %}
 		</tr>
 		{% for group in groups %}
