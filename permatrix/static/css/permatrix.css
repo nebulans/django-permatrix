@@ -43,3 +43,11 @@ td {
 .perm_remove {
     background-color: #8b0000;
 }
+
+.nowrap {
+    white-space:nowrap;
+}
+
+.hidden {
+    display: none;
+}

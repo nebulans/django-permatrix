@@ -9,6 +9,14 @@
 {% block sidebar %}{% endblock %}
 
 {% block content %}
+<div>
+	{% for module in modules %}
+		<span class="nowrap">
+			<input type="checkbox" class="module_checkbox" data-module="{{ module.ct.app_label }}" checked>{{ module.ct.app_label }}&nbsp;
+		</span>
+	{% endfor %}
+</div>
+
 <div class="permatrix-container">
 	<table>
 		<tr class="module-row">

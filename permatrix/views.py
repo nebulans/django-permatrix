@@ -89,7 +89,7 @@ class PermissionMatrixView(View):
         self.calculate_colspan()
         self.attach_groups()
         data = {
-            "modules": self.all_modules(),
+            "modules": list(self.all_modules()),  # Convert generator to list to allow reuse
             "models": self.all_models(),
             "permissions": self.all_permissions(),
             "groups": self.group_rows
@@ -115,14 +115,20 @@ class PermissionMatrixView(View):
         for perm in permissions:
             app_label = perm.content_type.app_label
             if app_label not in self.header_data:
-                self.header_data[app_label] = {"children": {}, "ct": perm.content_type, "cell": Cell(perm.content_type.app_label)}
+                cell = Cell(perm.content_type.app_label)
+                cell.data(module=perm.content_type.app_label)
+                self.header_data[app_label] = {"children": {}, "ct": perm.content_type, "cell": cell}
             app_container = self.header_data[app_label]
             model_name = perm.content_type.model
             if model_name not in app_container["children"]:
-                app_container["children"][model_name] = {"children": {}, "ct": perm.content_type, "cell": Cell(perm.content_type.name)}
+                cell = Cell(perm.content_type.name)
+                cell.data(module=perm.content_type.app_label)
+                app_container["children"][model_name] = {"children": {}, "ct": perm.content_type, "cell": cell}
             model_container = app_container["children"][model_name]
             full_name = "{}.{}".format(app_label, perm.codename)
-            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "name": full_name, "cell": PermNameCell(perm.codename)}
+            cell = PermNameCell(perm.codename)
+            cell.data(module=perm.content_type.app_label)
+            model_container["children"][perm.codename] = {"permission": perm, "groups": {}, "name": full_name, "cell": cell}
 
     def all_permissions(self):
         for model in self.all_models():
@@ -147,6 +153,7 @@ class PermissionMatrixView(View):
                 cell = PermissionCell("", permission["permission"].pk in permission_set)
                 cell.data(permission_id=permission["permission"].id, permission_name=permission["name"])
                 cell.data(group_id=g.id, group_name=g.name)
+                cell.data(module=permission["permission"].content_type.app_label)
                 data["cells"].append(cell)
             self.group_rows.append(data)
 

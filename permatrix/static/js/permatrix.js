@@ -77,3 +77,14 @@ $(document).on("click", ".submit-perms", function(){
         $(".actions").append("<p>An error occured</p>")
     })
 });
+
+$(document).on("change", ".module_checkbox", function(){
+    var t = $(this);
+    var module = t.data("module");
+    console.log(module);
+    if (t.is(":checked")){
+        $(".permatrix-container").find('*[data-module="'+module+'"]').removeClass("hidden")
+    } else {
+        $(".permatrix-container").find('*[data-module="'+module+'"]').addClass("hidden")
+    }
+});
