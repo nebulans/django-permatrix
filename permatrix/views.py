@@ -4,6 +4,9 @@ from django.views.generic import View
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
+from django import forms
+
+import json
 
 from itertools import chain
 
@@ -35,6 +38,18 @@ class Cell(object):
         return mark_safe("<td {}></td>".format(attrs))
 
 
+class GroupPermissionForm(forms.Form):
+    group = forms.ModelChoiceField(queryset=Group.objects.all())
+    permission = forms.ModelChoiceField(queryset=Permission.objects.all())
+    action = forms.ChoiceField(choices=(("add", "add"), ("remove", "remove")))
+
+    def save(self):
+        data = self.cleaned_data
+        if data["action"] == "add":
+            data["group"].permissions.add(data["permission"])
+        else:
+            data["group"].permissions.remove(data["permission"])
+
 class PermissionMatrixView(View):
 
     def __init__(self):
@@ -58,8 +73,14 @@ class PermissionMatrixView(View):
         return render(request, "permatrix/base.html", data)
 
     def post(self, request):
-        data = request.POST
-        print data
+        data = json.loads(request.POST["data"])
+        all_forms = [GroupPermissionForm(item) for item in data]
+        if all(f.is_valid() for f in all_forms):
+            for f in all_forms:
+                f.save()
+        else:
+            return HttpResponse(status_code=300)
+
         return HttpResponse()
 
     def get_permissions(self):
