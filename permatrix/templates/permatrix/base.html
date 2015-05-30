@@ -3,7 +3,13 @@
 {% load static %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "css/permatrix.css" %}" />{% endblock %}
-{% block extrahead %}{{ block.super }}<script src="{% static 'js/permatrix.js' %}"></script>{% endblock %}
+{% block extrahead %}
+	{{ block.super }}
+	{% if jq_path %}
+		<script src="{{ jq_path }}"></script>
+	{% endif %}
+	<script src="{% static 'js/permatrix.js' %}"></script>
+{% endblock %}
 
 
 {% block sidebar %}{% endblock %}

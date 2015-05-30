@@ -1,14 +1,17 @@
 from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.views.generic import View
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 from django import forms
+from django.conf import settings
 
 import json
 
-from itertools import chain
+try:
+    jquery_path = settings.PERMATRIX_JQUERY_PATH
+except AttributeError:
+    jquery_path = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"
 
 # Set of module names to exclude from view
 EXCLUDE_MODULES = {"sites", "sessions", "contenttypes", "djcelery", "django", "south"}
@@ -92,7 +95,8 @@ class PermissionMatrixView(View):
             "modules": list(self.all_modules()),  # Convert generator to list to allow reuse
             "models": self.all_models(),
             "permissions": self.all_permissions(),
-            "groups": self.group_rows
+            "groups": self.group_rows,
+            "jq_path": jquery_path
         }
         return render(request, "permatrix/base.html", data)
 
