@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from django.test import TestCase
+
+from permatrix.views import Cell, PermissionCell, PermNameCell
+
+class CellTestCase(TestCase):
+
+    def test_text(self):
+        """
+        Test setting of cell text in constructor
+        """
+        t = "Test Text"
+        c = Cell(t)
+        self.assertEqual(c.text, t)
+
+    def test_attr_setting_one(self):
+        """
+        Test setting of a single HTML attribute via the attr method
+        """
+        c = Cell()
+        c.attr(somekey="someval")
+        self.assertEqual(c.attrs_dict["somekey"], "someval")
+
+    def test_attr_setting_multiple(self):
+        """
+        Test setting of multiple HTML attributes via the attr method
+        """
+        c = Cell()
+        c.attr(somekey="someval", anotherkey="anotherval")
+        self.assertEqual(c.attrs_dict["somekey"], "someval")
+        self.assertEqual(c.attrs_dict["anotherkey"], "anotherval")
+
+    def test_attr_overwriting(self):
+        """
+        Test overwriting of attributes via the attr method
+        """
+        c = Cell()
+        c.attr(key="firstval")
+        c.attr(key="secondval")
+        self.assertEqual(c.attrs_dict["key"], "secondval")
+
+    def test_attr_access(self):
+        """
+        Test accessing already stored attributes via the attr method
+        """
+        c = Cell()
+        c.attr(key="val")
+        self.assertEqual(c.attr("key"), "val")
+
+    def test_data_setting_one(self):
+        """
+        Test setting of one HTML data attribute via the data method
+        """
+        c = Cell()
+        c.data(key="val")
+        self.assertEqual(c.attrs_dict["data-key"], "val")
+
+    def test_data_setting_multiple(self):
+        """
+        Test setting multiple HTML data attributes via the data method
+        """
+        c = Cell()
+        c.data(key="val", foo="bar")
+        self.assertEqual(c.attrs_dict["data-key"], "val")
+        self.assertEqual(c.attrs_dict["data-foo"], "bar")
+
+    def test_data_overwriting(self):
+        """
+        Test overwriting of data attributes via the data method
+        """
+        c = Cell()
+        c.data(key="initial")
+        c.data(key="final")
+        self.assertEqual(c.attrs_dict["data-key"], "final")
+
+    def test_data_access(self):
+        """
+        Test accessing data attributes via the data method
+        """
+        c = Cell()
+        c.data(key="val")
+        self.assertEqual(c.data("key"), "val")
+
+    def test_render_attrs_one(self):
+        """
+        Test rendering a single attribute into HTML form
+        """
+        c = Cell()
+        c.attr(key="val")
+        self.assertEqual(c.render_attrs(), "key='val'")
+
+    def test_render_attrs_multiple(self):
+        """
+        Test that multiple attributes get correctly delineated
+        """
+        c = Cell()
+        c.attr(key="val", foo="bar")
+        possibles = ("key='val' foo='bar'", "foo='bar' key='val'")
+        self.assertTrue(c.render_attrs() in possibles)
+
+    def test_class_rendering_one(self):
+        """
+        Test rendering of a single class into an HTML attribute
+        """
+        c = Cell()
+        c.classes.append("foo")
+        self.assertEqual(c.render_attrs(), "class='foo'")
+
+    def test_class_rendering_multiple(self):
+        """
+        Test rendering of multiple classes into HTML attributes
+        """
+        c = Cell()
+        c.classes.append("foo")
+        c.classes.append("bar")
+        self.assertEqual(c.render_attrs(), "class='foo bar'")
+
+    def test_html_output_empty(self):
+        """
+        Test the skeleton output for no input
+        """
+        c = Cell()
+        self.assertEqual(c.html, "<td ></td>")
+
+    def test_html_output_text(self):
+        """
+        Test HTML output of the cell text
+        """
+        c = Cell("Title")
+        self.assertEqual(c.html, "<td >Title</td>")
+
+    def test_html_output_attrs(self):
+        """
+        Test that the HTML output contains the attrs as rendered
+        """
+        c = Cell()
+        c.data(foo="bar")
+        self.assertEqual(c.html, "<td %s></td>" % c.render_attrs())

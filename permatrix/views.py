@@ -14,7 +14,7 @@ except AttributeError:
     jquery_path = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"
 
 # Set of module names to exclude from view
-EXCLUDE_MODULES = {"sites", "sessions", "contenttypes", "djcelery", "django", "south"}
+EXCLUDE_MODULES = {"sites", "sessions", "contenttypes", "djcelery", "django", "south", "admin"}
 EXCLUDE_MODULES = {}
 
 class Cell(object):
@@ -32,12 +32,13 @@ class Cell(object):
             return self.attrs_dict.get(args[0])
 
     def data(self, *args, **kwargs):
-        for key in kwargs:
-            data_key = "data-%s" % key
-            self.attrs_dict[data_key] = kwargs[key]
+        new_args = ["data-%s" % a for a in args]
+        new_kwargs = {"data-%s" % k: kwargs[k] for k in kwargs}
+        return self.attr(*new_args, **new_kwargs)
 
     def render_attrs(self):
-        self.attrs_dict["class"] = " ".join(self.classes)
+        if self.classes:
+            self.attrs_dict["class"] = " ".join(self.classes)
         return " ".join(["{}='{}'".format(k, self.attrs_dict[k]) for k in self.attrs_dict])
 
     @property
