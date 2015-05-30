@@ -67,3 +67,28 @@ td {
 .modules-select-header h3 {
     display: inline-block;
 }
+
+.submit-perms {
+    /* Initially hide the submit-perms button
+     Will be shown by JS once there are changes ready */
+    display: none;
+}
+
+.submit-perms-container {
+    padding: 10px;
+    display: block;
+}
+
+.actions-list-container {
+    border: 1px solid #AAA;
+    padding: 0 5px;
+    display: inline-block;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+.block {
+    display: block;
+}

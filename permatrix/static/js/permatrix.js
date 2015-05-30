@@ -34,6 +34,7 @@ $(document).on("click", ".permission-cell", function(){
     action_elem.data("group", t.data("group_id"));
     if (t.hasClass("perm_add") || t.hasClass("perm_remove")) {
         restoreCell(t);
+        updateNoPermsMessage();
         return false
     } else if (t.hasClass("perm_yes")) {
         action_elem.text("Remove permission " + t.data("permission_name") + " from group " + t.data("group_name"));
@@ -47,6 +48,7 @@ $(document).on("click", ".permission-cell", function(){
     }
     var inserted_elem = action_elem.appendTo(actions_container);
     t.data("action", inserted_elem);
+    updateNoPermsMessage();
 });
 
 $(document).on("click", ".submit-perms", function(){
@@ -69,6 +71,7 @@ $(document).on("click", ".submit-perms", function(){
         // Permission updates successful
         // Clear pending updates list
         $("#pending-actions").html("");
+        updateNoPermsMessage();
         // Remove all perm_remove classes
         $(".perm_remove").removeClass("perm_remove");
         // Remove all perm_add classes and replace with perm_yes
@@ -92,3 +95,13 @@ $(document).on("change", ".module_checkbox", function(){
 $(document).on("click", ".hide-all-modules", function(){
     $(".module_checkbox").prop("checked", false).trigger("change");
 });
+
+function updateNoPermsMessage(){
+    if ($("#pending-actions li").length > 0) {
+        $(".no-actions-message").hide();
+        $(".submit-perms").show();
+    } else {
+        $(".no-actions-message").show();
+        $(".submit-perms").hide();
+    }
+};
