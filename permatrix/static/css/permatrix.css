@@ -51,3 +51,11 @@ td {
 .hidden {
     display: none;
 }
+
+.modules-select {
+    border: 1px solid #AAA;
+    padding: 5px;
+    width: auto;
+    display: inline-block;
+    margin-bottom: 10px;
+}

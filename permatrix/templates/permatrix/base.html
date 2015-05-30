@@ -16,11 +16,15 @@
 
 {% block content %}
 <div>
-	{% for module in modules %}
-		<span class="nowrap">
-			<input type="checkbox" class="module_checkbox" data-module="{{ module.ct.app_label }}" checked>{{ module.ct.app_label }}&nbsp;
-		</span>
-	{% endfor %}
+	<h3>Show Modules</h3>
+	<div class="modules-select">
+		{% for module in modules %}
+			<span class="nowrap">
+				<input type="checkbox" class="module_checkbox" data-module="{{ module.ct.app_label }}" checked>
+				&nbsp;{{ module.ct.app_label }}&nbsp;
+			</span>
+		{% endfor %}
+	</div>
 </div>
 
 <div class="permatrix-container">
