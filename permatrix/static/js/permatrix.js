@@ -88,3 +88,7 @@ $(document).on("change", ".module_checkbox", function(){
         $(".permatrix-container").find('*[data-module="'+module+'"]').addClass("hidden")
     }
 });
+
+$(document).on("click", ".hide-all-modules", function(){
+    $(".module_checkbox").prop("checked", false).trigger("change");
+});

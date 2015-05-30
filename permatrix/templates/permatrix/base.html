@@ -16,7 +16,11 @@
 
 {% block content %}
 <div>
-	<h3>Show Modules</h3>
+	<span class="modules-select-header">
+		<h3>Show Modules</h3>
+		&nbsp;-&nbsp;
+		<a class="hide-all-modules">Hide All</a>
+	</span>
 	<div class="modules-select">
 		{% for module in modules %}
 			<span class="nowrap">
