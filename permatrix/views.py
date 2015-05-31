@@ -71,6 +71,20 @@ class GroupPermissionForm(forms.Form):
     permission = forms.ModelChoiceField(queryset=Permission.objects.all())
     action = forms.ChoiceField(choices=(("add", "add"), ("remove", "remove")))
 
+    def clean(self):
+        cleaned_data = super(GroupPermissionForm, self).clean()
+        perm = cleaned_data.get("permission")
+        group = cleaned_data.get("group")
+        action = cleaned_data.get("action")
+        if group and perm and action:
+            # Form is valid so far
+            test_value = perm in group.permissions.all()
+            if action == "add" and test_value:
+                raise forms.ValidationError("Permission already assigned")
+            elif action == "remove" and not test_value:
+                raise forms.ValidationError("Permission not assigned")
+        return cleaned_data
+
     def save(self):
         data = self.cleaned_data
         if data["action"] == "add":

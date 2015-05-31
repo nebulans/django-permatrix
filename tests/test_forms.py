@@ -82,3 +82,25 @@ class PermissionFormTestCase(TestCase):
             "action": "invalid"
         })
         self.assertFalse(f.is_valid())
+
+    def test_invalid_add(self):
+        """
+        Test that adding an existing permission raises a validation error
+        """
+        f = GroupPermissionForm({
+            "group": self.group.id,
+            "permission": self.has_perm.id,
+            "action": "add"
+        })
+        self.assertFalse(f.is_valid())
+
+    def test_invalid_remove(self):
+        """
+        Test that removing a non-existent permission raises a validation error
+        """
+        f = GroupPermissionForm({
+            "group": self.group.id,
+            "permission": self.not_perm.id,
+            "action": "remove"
+        })
+        self.assertFalse(f.is_valid())
