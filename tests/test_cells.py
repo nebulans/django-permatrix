@@ -138,3 +138,65 @@ class CellTestCase(TestCase):
         c = Cell()
         c.data(foo="bar")
         self.assertEqual(c.html, "<td %s></td>" % c.render_attrs())
+
+
+class PermissionCellTestCase(TestCase):
+
+    def test_no_perm(self):
+        """
+        Test correct classes for no permission on perm cell
+        """
+        c = PermissionCell(has_perm=False)
+        self.assertEqual(c.classes, ["permission-cell"])
+
+    def test_has_perm(self):
+        """
+        Test correct classes for has perm on perm cell
+        """
+        c = PermissionCell(has_perm=True)
+        self.assertEqual(c.classes, ["permission-cell", "perm_yes"])
+
+    def test_no_text(self):
+        """
+        Test that cell text is empty string for no text input
+        """
+        c = PermissionCell()
+        self.assertEqual(c.text, "")
+
+    def test_has_text(self):
+        """
+        Test cell text passed through correctly
+        """
+        c = PermissionCell(text="Some Title")
+        self.assertEqual(c.text, "Some Title")
+
+
+class PermNameCellTestCase(TestCase):
+
+    def test_classes(self):
+        """
+        Test that correct classes are attached to cell
+        """
+        c = PermNameCell()
+        self.assertEqual(c.classes, ["permname"])
+
+    def test_no_text(self):
+        """
+        Test cell text is empty string for no text passed
+        """
+        c = PermNameCell()
+        self.assertEqual(c.text, "")
+
+    def test_text_passed(self):
+        """
+        Test cell text passed correctly
+        """
+        c = PermNameCell("Some Header")
+        self.assertEqual(c.text, "Some Header")
+
+    def test_html_output(self):
+        """
+        Test cell html output
+        """
+        c = PermNameCell("TEXT")
+        self.assertEqual(c.html, "<td class='permname'><span class='vertical-text'>TEXT</span></td>")
