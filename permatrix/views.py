@@ -107,9 +107,9 @@ class PermissionMatrixView(View):
         self.calculate_colspan()
         self.attach_groups()
         data = {
-            "modules": list(self.all_modules()),  # Convert generator to list to allow reuse
-            "models": self.all_models(),
-            "permissions": self.all_permissions(),
+            "modules": self.all_modules,  # Convert generator to list to allow reuse
+            "models": self.all_models,
+            "permissions": self.all_permissions,
             "groups": self.group_rows,
             "jq_path": jquery_path
         }
