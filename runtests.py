@@ -46,8 +46,10 @@ def run_tests(*test_args):
     # As this combination is not supported by django, so will fail
     import django
     if sys.version_info.major < 3 and django.VERSION[:2] == (1, 4):
-        print "This combination of python and django is not supported"
-        return
+        python_version = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])
+        django_version = ".".join([str(i) for i in django.VERSION[:3]])
+        print("This combination of python (%s) and django (%s) is not supported" % (python_version, django_version))
+        sys.exit(0)
 
     # Run tests
     test_runner = NoseTestSuiteRunner(verbosity=1)
