@@ -28,7 +28,7 @@ class PermissionFormTestCase(TestCase):
         f.is_valid()
         f.save()
         result_ids = [i.id for i in self.group.permissions.all()]
-        self.assertItemsEqual(result_ids, [self.has_perm.id, self.not_perm.id])
+        self.assertEqual(sorted(result_ids), sorted([self.has_perm.id, self.not_perm.id]))
 
     def test_save_remove(self):
         """
@@ -42,7 +42,7 @@ class PermissionFormTestCase(TestCase):
         f.is_valid()
         f.save()
         result_ids = [i.id for i in self.group.permissions.all()]
-        self.assertItemsEqual(result_ids, [])
+        self.assertEqual(result_ids, [])
 
     def test_invalid_group(self):
         """
