@@ -45,8 +45,7 @@ def run_tests(*test_args):
     # We don't want to run any tests against Django 1.4 on python 3.3
     # As this combination is not supported by django, so will fail
     import django
-    django_version = django.__version__.split(".")
-    if sys.version_info.major < 3 and django_version[:2] == ["1", "4"]:
+    if sys.version_info.major < 3 and django.VERSION[:2] == (1, 4):
         print "This combination of python and django is not supported"
         return
 
