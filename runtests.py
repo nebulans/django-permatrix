@@ -42,15 +42,6 @@ def run_tests(*test_args):
     if not test_args:
         test_args = ['tests']
 
-    # We don't want to run any tests against Django 1.4 on python 3.3
-    # As this combination is not supported by django, so will fail
-    import django
-    if sys.version_info.major < 3 and django.VERSION[:2] == (1, 4):
-        python_version = ".".join([str(i) for i in (sys.version_info.major, sys.version_info.minor, sys.version_info.micro)])
-        django_version = ".".join([str(i) for i in django.VERSION[:3]])
-        print("This combination of python (%s) and django (%s) is not supported" % (python_version, django_version))
-        sys.exit(0)
-
     # Run tests
     test_runner = NoseTestSuiteRunner(verbosity=1)
 
